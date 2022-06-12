@@ -50,7 +50,8 @@ export class Streamer {
   }
 
   trigger() {
-    const record = this.generator()
+    const record = this.generator();
+    console.log(record.vin, record);
     this.handlers.forEach(h => h(record))
   }
 }

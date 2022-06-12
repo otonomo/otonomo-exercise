@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { PureComponent } from 'react'
+import React, { ChangeEvent, PureComponent } from 'react'
 import generateCarData, { CarData } from './api/data-generator'
 import createStreamerFrom, { Streamer } from './api/streamer'
 import { SubscribedVin } from './App.types';
@@ -7,6 +7,8 @@ import Input from './components/Input';
 import Button from './components/Button';
 import Checkbox from './components/Checkbox';
 import { isEqual } from 'lodash';
+import EventNotification from './components/EventNotification';
+import { VIN_REG_EXP } from './App.consts';
 
 const STREAMERS_CACHE: {[vin: string]: Streamer } = {};
 
@@ -15,6 +17,7 @@ interface Props {}
 interface State {
   subscribedVinsMap: {[vin:string]: SubscribedVin};
   receivedEvents: CarData[];
+  vinInputStr: string;
 }
 
 class App extends PureComponent<Props, State> {
@@ -24,6 +27,7 @@ class App extends PureComponent<Props, State> {
     this.state = {
       subscribedVinsMap:{},
       receivedEvents: [],
+      vinInputStr: '',
     }
   }
 
@@ -41,22 +45,31 @@ class App extends PureComponent<Props, State> {
         }
       })
     }
-    const streamer = React.useMemo(() => createStreamerFrom(() => generateCarData('12345678901234567')), [])
+  }
 
-    React.useEffect(() => {
-      
-      return () => { }
-    }, [streamer])
+  handleVinInputChange = (e: ChangeEvent) => {
+    this.setState({
+      vinInputStr: (e.target as HTMLInputElement).value,
+    })
+  }
+
+  handleAddButtonClick = () => {
+
   }
 
   render() {
 
-    const { subscribedVinsMap } = this.state;
+    const { subscribedVinsMap, receivedEvents, vinInputStr } = this.state;
+
+    const isAddButtonDisabled = !VIN_REG_EXP.test(vinInputStr) || subscribedVinsMap[vinInputStr];
+
     return <React.Fragment>
       <div className="app-pane app-left-pane">
         <div className="app-pane-top-bar app-left-pane-top-bar">
-          <Input></Input>
-          <Button>Add</Button>
+          <Input value={vinInputStr}
+            onChange={this.handleVinInputChange}
+          ></Input>
+          <Button disabled={isAddButtonDisabled} onClick={this.handleAddButtonClick}>Add</Button>
         </div>
         <ul className="app-left-pane-vins-list">
           {Object.values(subscribedVinsMap).map((subVin) => <li key={subVin.id} style={{order: subVin.index}}>
@@ -69,6 +82,11 @@ class App extends PureComponent<Props, State> {
             <Checkbox>Filter events in which fuel level is below 15%</Checkbox>
         </div>
       </div>
+      <ul className="app-left-pane-events-list">
+        {receivedEvents.map((carData) => <li key={carData.vin}>
+          <EventNotification carEvent={carData}></EventNotification>
+        </li>)}
+      </ul>
     </React.Fragment>
   }
 }
