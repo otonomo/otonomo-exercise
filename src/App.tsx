@@ -43,6 +43,14 @@ class App extends PureComponent<Props, State> {
           STREAMERS_CACHE[subVin.id] = createStreamerFrom(() => generateCarData(subVin.id))
           STREAMERS_CACHE[subVin.id].subscribe(this.handleReceivedEvent);
           STREAMERS_CACHE[subVin.id].start()
+        } else if (prevSubVin.isPaused !== subVin.isPaused) {
+          if (subVin.isPaused) {
+            STREAMERS_CACHE[subVin.id].removeHandler(this.handleReceivedEvent);
+            STREAMERS_CACHE[subVin.id].stop();
+          } else {
+            STREAMERS_CACHE[subVin.id].subscribe(this.handleReceivedEvent);
+            STREAMERS_CACHE[subVin.id].start()
+          }
         }
       })
     }
