@@ -87,6 +87,20 @@ class App extends PureComponent<Props, State> {
     });
   }
 
+  handleVinCheckboxChange = (clickedVinId: string) => {
+    this.setState((curState) => {
+      return {
+        subscribedVinsMap: {
+          ...curState.subscribedVinsMap,
+          [clickedVinId]: {
+            ...curState.subscribedVinsMap[clickedVinId],
+            isPaused: !curState.subscribedVinsMap[clickedVinId].isPaused
+          }
+        }
+      }
+    })
+  }
+
   render() {
 
     const { subscribedVinsMap, receivedEvents, vinInputStr } = this.state;
@@ -103,7 +117,7 @@ class App extends PureComponent<Props, State> {
         </div>
         <ul className="app-left-pane-vins-list">
           {Object.values(subscribedVinsMap).map((subVin) => <li key={subVin.id} style={{order: subVin.index}}>
-            <Checkbox style={{color:subVin.color}} checked={!subVin.isPaused}>{subVin.id}</Checkbox>
+            <Checkbox style={{color:subVin.color}} checked={!subVin.isPaused} onChange={() => { this.handleVinCheckboxChange(subVin.id) }}>{subVin.id}</Checkbox>
           </li>)}
         </ul>
       </div>
