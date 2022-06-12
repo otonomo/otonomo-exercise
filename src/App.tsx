@@ -53,7 +53,7 @@ class App extends PureComponent<Props, State> {
     const { subscribedVinsMap } = this.state;
     return <React.Fragment>
       <div className="app-pane app-left-pane">
-        <div className="app-left-pane-top-bar">
+        <div className="app-pane-top-bar app-left-pane-top-bar">
           <Input></Input>
           <Button>Add</Button>
         </div>
@@ -64,7 +64,9 @@ class App extends PureComponent<Props, State> {
         </ul>
       </div>
       <div className="app-pane app-right-pane">
-
+        <div className="app-pane-top-bar app-right-pane-top-bar">
+            <Checkbox>Filter events in which fuel level is below 15%</Checkbox>
+          </div>
       </div>
     </React.Fragment>
   }
