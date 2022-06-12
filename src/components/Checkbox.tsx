@@ -7,7 +7,7 @@ function Checkbox({ children, ...props }: CheckboxProps) {
   return (
     <label className="checkbox-label">
       <input type="checkbox" {...props} />
-      <span className="label">{children}</span>
+      <span className="label" style={props.style || {}}>{children}</span>
     </label>
   )
 }

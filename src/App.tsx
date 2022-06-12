@@ -9,6 +9,7 @@ import Checkbox from './components/Checkbox';
 import { isEqual } from 'lodash';
 import EventNotification from './components/EventNotification';
 import { VIN_REG_EXP } from './App.consts';
+import createRandomColor from './dom-utils/colors';
 
 const STREAMERS_CACHE: {[vin: string]: Streamer } = {};
 
@@ -75,7 +76,9 @@ class App extends PureComponent<Props, State> {
           ...curState.subscribedVinsMap,
           [candidateVin]: {
             id: candidateVin,
-            index: Object.keys(curState.subscribedVinsMap).length
+            index: Object.keys(curState.subscribedVinsMap).length,
+            color: createRandomColor(),
+            isPaused: false,
           }
         },
         vinInputStr: '',
@@ -100,7 +103,7 @@ class App extends PureComponent<Props, State> {
         </div>
         <ul className="app-left-pane-vins-list">
           {Object.values(subscribedVinsMap).map((subVin) => <li key={subVin.id} style={{order: subVin.index}}>
-            <Checkbox>{subVin.id}</Checkbox>
+            <Checkbox style={{color:subVin.color}}>{subVin.id}</Checkbox>
           </li>)}
         </ul>
       </div>
@@ -110,7 +113,7 @@ class App extends PureComponent<Props, State> {
         </div>
         <ul className="app-left-pane-events-list">
           {receivedEvents.map((carData) => <li key={`${carData.vin}-${carData.timestamp}`}>
-            <EventNotification carEvent={carData}></EventNotification>
+            <EventNotification carEvent={carData} color={subscribedVinsMap[carData.vin].color}></EventNotification>
           </li>)}
         </ul>
       </div>
