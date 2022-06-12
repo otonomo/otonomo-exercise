@@ -11,7 +11,7 @@ export default function createStreamerFrom(generator: Generator, range = DEFAULT
 
 const DEFAULT_TIME_RANGE_IN_MS = [1000, 5000]
 
-class Streamer {
+export class Streamer {
   private isStreaming = false
   private handlers: Handler[] = []
 
