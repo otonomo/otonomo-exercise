@@ -8,7 +8,7 @@ import Button from './components/Button';
 import Checkbox from './components/Checkbox';
 import { isEqual } from 'lodash';
 import EventNotification from './components/EventNotification';
-import { VIN_REG_EXP } from './App.consts';
+import { DEFAULT_FILTER_THRESHOLD_VAL, VIN_REG_EXP } from './App.consts';
 import createRandomColor from './dom-utils/colors';
 
 const STREAMERS_CACHE: {[vin: string]: Streamer } = {};
@@ -19,6 +19,7 @@ interface State {
   subscribedVinsMap: {[vin:string]: SubscribedVin};
   receivedEvents: CarData[];
   vinInputStr: string;
+  isFilterApplied: boolean;
 }
 
 class App extends PureComponent<Props, State> {
@@ -29,6 +30,7 @@ class App extends PureComponent<Props, State> {
       subscribedVinsMap:{},
       receivedEvents: [],
       vinInputStr: '',
+      isFilterApplied: false,
     }
   }
 
@@ -109,11 +111,21 @@ class App extends PureComponent<Props, State> {
     })
   }
 
+  handleFilterCheckboxChange = () => {
+    this.setState((curState) => {
+      return {
+        isFilterApplied: !curState.isFilterApplied,
+      }
+    })
+  }
+
   render() {
 
-    const { subscribedVinsMap, receivedEvents, vinInputStr } = this.state;
+    const { subscribedVinsMap, receivedEvents, vinInputStr, isFilterApplied } = this.state;
 
     const isAddButtonDisabled = !VIN_REG_EXP.test(vinInputStr) || subscribedVinsMap[vinInputStr];
+
+    const filteredReceivedEvents: CarData[] = isFilterApplied ? receivedEvents.filter((carData) => carData && carData.fuel < DEFAULT_FILTER_THRESHOLD_VAL) : receivedEvents;
 
     return <React.Fragment>
       <div className="app-pane app-left-pane">
@@ -131,10 +143,10 @@ class App extends PureComponent<Props, State> {
       </div>
       <div className="app-pane app-right-pane">
         <div className="app-pane-top-bar app-right-pane-top-bar">
-            <Checkbox>Filter events in which fuel level is below 15%</Checkbox>
+            <Checkbox checked={isFilterApplied} onChange={this.handleFilterCheckboxChange}>Filter events in which fuel level is below 15%</Checkbox>
         </div>
         <ul className="app-left-pane-events-list">
-          {receivedEvents.map((carData) => <li key={`${carData.vin}-${carData.timestamp}`}>
+          {filteredReceivedEvents.map((carData) => <li key={`${carData.vin}-${carData.timestamp}`}>
             <EventNotification carEvent={carData} color={subscribedVinsMap[carData.vin].color}></EventNotification>
           </li>)}
         </ul>
