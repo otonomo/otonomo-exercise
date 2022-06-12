@@ -96,14 +96,14 @@ class App extends PureComponent<Props, State> {
     return <React.Fragment>
       <div className="app-pane app-left-pane">
         <div className="app-pane-top-bar app-left-pane-top-bar">
-          <Input value={vinInputStr}
+          <Input value={vinInputStr} placehoder="Vin"
             onChange={this.handleVinInputChange}
           ></Input>
           <Button disabled={isAddButtonDisabled} onClick={this.handleAddButtonClick}>Add</Button>
         </div>
         <ul className="app-left-pane-vins-list">
           {Object.values(subscribedVinsMap).map((subVin) => <li key={subVin.id} style={{order: subVin.index}}>
-            <Checkbox style={{color:subVin.color}}>{subVin.id}</Checkbox>
+            <Checkbox style={{color:subVin.color}} checked={!subVin.isPaused}>{subVin.id}</Checkbox>
           </li>)}
         </ul>
       </div>

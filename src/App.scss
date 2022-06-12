@@ -1,6 +1,9 @@
 .app-pane {
   --grey-light: rgb(192,192,192);
 
+  display: flex;
+  flex-direction: column;
+
   > .app-pane-top-bar {
     padding: 2em;
   }
@@ -8,7 +11,7 @@
   ul {
     flex: 1;
     padding: 1em 2em;
-    overflow: auto;
+    overflow-y: auto;
   }
   
   &.app-left-pane {
@@ -21,11 +24,12 @@
         margin-right: 1em;
       }
     }
+    span.label {
+      font-weight: 600;
+    }
   }
 
   &.app-right-pane {
-    display: flex;
-    flex-direction: column;
     flex: 1;
     border-left: 1px solid var(--grey-light);
     > .app-pane-top-bar.app-right-pane-top-bar {
