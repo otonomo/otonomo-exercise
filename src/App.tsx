@@ -40,11 +40,22 @@ class App extends PureComponent<Props, State> {
         }
         if (prevSubVin === undefined) {
           STREAMERS_CACHE[subVin.id] = createStreamerFrom(() => generateCarData(subVin.id))
-          // STREAMERS_CACHE[subVin.id].subscribe(null)
+          STREAMERS_CACHE[subVin.id].subscribe(this.handleReceivedEvent);
           STREAMERS_CACHE[subVin.id].start()
         }
       })
     }
+  }
+
+  handleReceivedEvent = (carData: CarData) => {
+    this.setState((curState) => {
+      return {
+        receivedEvents: [
+          carData,
+          ...curState.receivedEvents
+        ]
+      }
+    })
   }
 
   handleVinInputChange = (e: ChangeEvent) => {
@@ -54,7 +65,23 @@ class App extends PureComponent<Props, State> {
   }
 
   handleAddButtonClick = () => {
+    const candidateVin = this.state.vinInputStr;
+    if (!candidateVin || this.state.subscribedVinsMap[candidateVin]) {
+      return;
+    }
+    this.setState((curState) => {
+      return {
+        subscribedVinsMap: {
+          ...curState.subscribedVinsMap,
+          [candidateVin]: {
+            id: candidateVin,
+            index: Object.keys(curState.subscribedVinsMap).length
+          }
+        },
+        vinInputStr: '',
+      }
 
+    });
   }
 
   render() {
@@ -81,12 +108,12 @@ class App extends PureComponent<Props, State> {
         <div className="app-pane-top-bar app-right-pane-top-bar">
             <Checkbox>Filter events in which fuel level is below 15%</Checkbox>
         </div>
+        <ul className="app-left-pane-events-list">
+          {receivedEvents.map((carData) => <li key={`${carData.vin}-${carData.timestamp}`}>
+            <EventNotification carEvent={carData}></EventNotification>
+          </li>)}
+        </ul>
       </div>
-      <ul className="app-left-pane-events-list">
-        {receivedEvents.map((carData) => <li key={carData.vin}>
-          <EventNotification carEvent={carData}></EventNotification>
-        </li>)}
-      </ul>
     </React.Fragment>
   }
 }
