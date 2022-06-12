@@ -1,0 +1,24 @@
+.app-pane {
+  --grey-light: rgb(192,192,192);
+  > .app-pane-top-bar {
+    padding: 2em;
+  }
+  &.app-left-pane {
+    width: 360px;
+    > .app-pane-top-bar.app-left-pane-top-bar {
+      display: flex;
+      flex-direction: row;
+      > input {
+        flex: 1;
+        margin-right: 1em;
+      }
+    }
+  }
+  &.app-right-pane {
+    flex: 1;
+    border-left: 1px solid var(--grey-light);
+    > .app-pane-top-bar.app-right-pane-top-bar {
+      border-bottom: 1px solid var(--grey-light);
+    }
+  }
+}
